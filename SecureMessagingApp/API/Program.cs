@@ -9,6 +9,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+    });
+});
+
 var JwtSetting = builder.Configuration.GetSection("JwtSetting");
 
 // Add services to the container.
@@ -42,8 +51,22 @@ builder.Services.AddAuthentication(opt =>
             ValidateAudience = false
 
     };
+    option.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hus"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
     
+
 builder.Services.AddAuthorization(); 
 
 builder.Services.AddOpenApi();
@@ -56,6 +79,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200", "https://localhost:4200"));
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
