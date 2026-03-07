@@ -1,9 +1,12 @@
 using System.Data.SqlTypes;
 using API.DTO;
+using API.Extensions;
 using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace API.Endpoints;
 public static class AccountEndpoint{
@@ -76,6 +79,14 @@ public static class AccountEndpoint{
 
         });
 
+        group.MapGet("/me", async (HttpContext context, UserManager<AppUser> userManager) =>
+        {
+            var currentLoggedInUserId = context.User.GetUserId();
+            var currentLoggedInUser = await userManager.Users.SingleOrDefaultAsync(x => x.Id ==currentLoggedInUserId.ToString());
+            return Results.Ok(Response<AppUser>.Success(currentLoggedInUser!, "User Fetched Successfully."));
+
+        }).RequireAuthorization();
+           
         return group;    
         
         

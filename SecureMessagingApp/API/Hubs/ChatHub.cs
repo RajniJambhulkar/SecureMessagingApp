@@ -49,9 +49,10 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
 
             await Clients.AllExcept(connectionId).SendAsync("Notify", currentUser); //notify other users that currentUser came online
         }
-        if (!string.IsNullOrEmpty(receiverId){
+        if (!string.IsNullOrEmpty(receiverId))
+        {
             await LoadMessage(receiverId);
-        })
+        }
         await Clients.All.SendAsync("OnlineUsers", await GetAllUsers()); //send updated users to all clients
 
     }
