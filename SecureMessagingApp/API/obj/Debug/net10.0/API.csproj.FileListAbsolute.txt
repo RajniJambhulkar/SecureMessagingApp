@@ -309,3 +309,4 @@ C:\Aspnetcodes\SecureMessaging\SecureMessagingApp\API\obj\Debug\net10.0\API.cspr
 C:\Aspnetcodes\SecureMessaging\SecureMessagingApp\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 C:\Aspnetcodes\SecureMessaging\SecureMessagingApp\API\obj\Debug\net10.0\ref\API.dll
 C:\Aspnetcodes\SecureMessaging\SecureMessagingApp\API\obj\Debug\net10.0\API.sourcelink.json
+C:\Aspnetcodes\SecureMessaging\SecureMessagingApp\API\obj\Debug\net10.0\compressed\pxahbpnhdv-{0}-b8fvj1p9fe-b8fvj1p9fe.gz
