@@ -1,6 +1,7 @@
 using System.Text;
 using API.Data;
 using API.Endpoints;
+using API.Hubs;
 using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +34,8 @@ builder.Services.AddIdentityCore<AppUser>() //This sets up ASP.NET Core Identity
 
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddSignalR();  //Add SignalR services to the application, enabling real-time web functionality for features like chat.
+
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,7 +60,7 @@ builder.Services.AddAuthentication(opt =>
         {
             var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
-            if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hus"))
+            if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
             }
@@ -85,6 +88,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapAccountEndpoint();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();
 
