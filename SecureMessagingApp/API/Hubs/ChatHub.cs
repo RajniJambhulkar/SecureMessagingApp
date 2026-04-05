@@ -51,12 +51,12 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
         }
         if (!string.IsNullOrEmpty(receiverId))
         {
-            await LoadMessage(receiverId);
+            await LoadMessages(receiverId);
         }
         await Clients.All.SendAsync("OnlineUsers", await GetAllUsers()); //send updated users to all clients
 
     }
-    public async Task LoadMessage(string recipientId, int pageNumber = 1)
+    public async Task LoadMessages(string recipientId, int pageNumber = 1)
     {
          int pageSize = 10;
          var username = Context.User!.Identity!.Name;
