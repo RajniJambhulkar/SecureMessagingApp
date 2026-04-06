@@ -82,6 +82,8 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
         })
         .ToListAsync();
 
+        
+
         foreach(var message in messages)
         {
             var msg = await context.Messages.FirstOrDefaultAsync(x => x.Id == message.Id);

@@ -33,7 +33,7 @@
           </div>
         } 
         @for (item of chatService.chatMessages(); track item.id) {
-            @if(item.senderId !== authService.currentLoggedUser?.id?.toString()) 
+            @if(item.senderId !== authService.currentLoggedUser()?.id?.toString()) 
             {
                 <div class="flex justify-start mb-3 gap-2">
                     <div class="flex items-center justify-center h-10 w-10 rounded-full 
@@ -44,7 +44,7 @@
                     <div class="bg-white text-gray-800 px-4 py-1 rounded-2xl max-w-xs shadow">
                         <p class="text-sm">{{ item.content }}</p>
                         <span class="text-[10px] text-gray-400 block mt-1">
-                            {{ item.createdDate | date:'shortTime' }}
+                            {{ item.createdDate | date:'MMM d, h:mm a' }}
                         </span>
                     </div>
                 </div>
@@ -54,13 +54,13 @@
                     <div class="bg-indigo-500 text-white px-4 py-2 rounded-2xl max-w-xs shadow">
                         <p class="text-sm">{{ item.content }}</p>
                         <span class="text-[10px] opacity-70 block text-right mt-1">
-                            {{ item.createdDate | date:'shortTime' }}
+                            {{ item.createdDate | date:'MMM d, h:mm a' }}
                         </span>
                     </div>
                     <div class="flex items-center justify-center h-10 w-10 rounded-full 
                         bg-gradient-to-r from-blue-500 to-purple-500 flex-shrink-0">
-                        <img [src]="authService.currentLoggedUser?.profileImage" 
-                        [alt]="authService.currentLoggedUser?.fullName" class="w-full h-full rounded-full object-cover">
+                        <img [src]="authService.currentLoggedUser()?.profileImage" 
+                        [alt]="authService.currentLoggedUser()?.fullName" class="w-full h-full rounded-full object-cover">
                     </div>
                 </div>
             }

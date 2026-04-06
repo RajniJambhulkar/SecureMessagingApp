@@ -8,14 +8,14 @@
     <!-- Avatar -->
     <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
       <img 
-        [src]="authService.currentLoggedUser?.profileImage || '/avatar-11.png'"
+        [src]="authService.currentLoggedUser()?.profileImage || '/avatar-11.png'"
         class="w-full h-full object-cover">
     </div>
 
     <!-- Name + Status -->
     <div class="flex flex-col min-w-0">
       <p class="text-sm font-semibold text-gray-800 truncate">
-        {{ authService.currentLoggedUser?.fullName }}
+        {{ authService.currentLoggedUser()?.fullName }}
       </p>
       <p class="text-xs text-gray-500 truncate">
         Online

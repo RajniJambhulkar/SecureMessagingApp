@@ -34,7 +34,15 @@ builder.Services.AddIdentityCore<AppUser>() //This sets up ASP.NET Core Identity
 
 builder.Services.AddScoped<TokenService>();
 
-builder.Services.AddSignalR();  //Add SignalR services to the application, enabling real-time web functionality for features like chat.
+builder.Services.AddControllers()
+    .AddJsonOptions(opts => {
+        opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
+
+builder.Services.AddSignalR()
+.AddJsonProtocol(opts => {
+        opts.PayloadSerializerOptions.Converters.Add(new DateTimeUtcConverter());
+    });  //Add SignalR services to the application, enabling real-time web functionality for features like chat.
 
 builder.Services.AddAuthentication(opt =>
 {

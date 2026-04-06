@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiResponse } from '../models/api-response';
 import { User } from '../models/user';
@@ -12,6 +12,17 @@ export class AuthService {
   private baseUrl = 'http://localhost:5000/api/account';
   private token = "token";
   private httpClient = inject(HttpClient);
+
+
+   // ✅ Signal instead of getter
+  currentLoggedUser = signal<User | null>(this.loadUserFromStorage());
+
+  private loadUserFromStorage(): User | null {
+    const raw = localStorage.getItem('user');
+    if (!raw || raw === '{}') return null;
+    return JSON.parse(raw);
+  }
+  
   register(data: FormData): Observable<ApiResponse<string>> {
     return this.httpClient.post<ApiResponse<string>>(`${this.baseUrl}/register`, data)
       .pipe(tap((response) => {
@@ -44,6 +55,7 @@ export class AuthService {
         if (response.isSuccess) {
           localStorage.setItem('user', JSON.stringify(response.data));
           console.log('User saved:', response.data);
+          this.currentLoggedUser.set(response.data); // Update signal with user data
           
         }
       }
@@ -61,11 +73,12 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.token);
     localStorage.removeItem('user');
+    this.currentLoggedUser.set(null); // Clear user signal on logout
   }
 
-  get currentLoggedUser(): User | null {
-    const user: User = JSON.parse(localStorage.getItem('user') || '{}');
-    return user;
-  }
+  // get currentLoggedUser(): User | null {
+  //   const user: User = JSON.parse(localStorage.getItem('user') || '{}');
+  //   return user;
+  // }
 }
 
