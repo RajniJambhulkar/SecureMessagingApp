@@ -33,8 +33,16 @@ logout() {
     this.chatService.startConnection(this.authService.getAccessToken!);
   }
 
-  openChatWindow(user: User) {
-    this.chatService.currentOpenedChat.set(user);
-    this.chatService.loadMessages(1);
+//   openChatWindow(user: User) {
+//     this.chatService.currentOpenedChat.set(user);
+//     this.chatService.loadMessages(1);
+// }
+
+openChatWindow(user: User) {
+  this.chatService.currentOpenedChat.set(user);
+  this.chatService.chatMessages.set([]);
+  this.chatService.isLoading.set(true);
+  this.chatService.isFirstLoad = true;
+  this.chatService.loadMessages(1);
 }
 }

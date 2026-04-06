@@ -15,6 +15,7 @@ export class ChatService {
   chatMessages = signal<Message[]>([]);
   isLoading = signal<boolean>(true);
 
+  isFirstLoad = true;
 
   private hubConnection?: HubConnection;
 
@@ -37,30 +38,43 @@ export class ChatService {
       });
     });
 
-    this.hubConnection.on('ReceiveMessageList', (message) => {
-      // this.chatMessages.update(messages => [...message, ...messages]);
-      this.chatMessages.set(message);
-      this.isLoading.update(() => false);
-    });
-    // this.hubConnection!.on('ReceiveNewMessage', (message) => {
-    //   document.title = '(1) New Message';
-    //   this.chatMessages.update(messages => [...messages, message]);
+    // this.hubConnection.on('ReceiveMessageList', (message) => {
+    //   // this.chatMessages.update(messages => [...message, ...messages]);
+    //   this.chatMessages.set(message);
+    //   this.isLoading.update(() => false);
     // });
+
+    this.hubConnection.on('ReceiveMessageList', (messages: Message[]) => {
+      const sorted = [...messages].sort(
+        (a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      );
+
+      if (this.isFirstLoad) {
+        this.chatMessages.set(sorted);
+      } else {
+        // Load more: prepend older messages at top
+        this.chatMessages.update(existing => [...sorted, ...existing]);
+      }
+
+      this.isLoading.set(false);
+    });
+
+
     this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
-  const currentChat = this.currentOpenedChat();
+      const currentChat = this.currentOpenedChat();
 
-  if (!currentChat) return;
+      if (!currentChat) return;
 
-  // ✅ FIX: only update if message belongs to current chat
-  if (
-    message.senderId === currentChat.id?.toString() ||
-    message.receiverId === currentChat.id?.toString()
-  ) {
-    this.chatMessages.update(messages => [...messages, message]);
-  }
+      // ✅ FIX: only update if message belongs to current chat
+      if (
+        message.senderId === currentChat.id?.toString() ||
+        message.receiverId === currentChat.id?.toString()
+      ) {
+        this.chatMessages.update(messages => [...messages, message]);
+      }
 
-  document.title = '(1) New Message';
-});
+      document.title = '(1) New Message';
+    });
 
 
   }
@@ -87,50 +101,50 @@ export class ChatService {
   //     .catch(err => console.error('Error sending message: ', err));
   // }
 
-//   openChat(user: User) {
-//   this.currentOpenedChat.set(user);
+  //   openChat(user: User) {
+  //   this.currentOpenedChat.set(user);
 
-//   // ✅ FIX: clear previous chat messages
-//   this.chatMessages.set([]);
-//   this.isLoading.set(true);
+  //   // ✅ FIX: clear previous chat messages
+  //   this.chatMessages.set([]);
+  //   this.isLoading.set(true);
 
-//   // Load fresh messages
-//   this.loadMessages(1);
-// }
+  //   // Load fresh messages
+  //   this.loadMessages(1);
+  // }
 
   sendMessage(message: string) {
-  if (!message) return;
+    if (!message) return;
 
-  const currentChat = this.currentOpenedChat();
-  if (!currentChat) {
-    console.error('No chat selected');
-    return;
+    const currentChat = this.currentOpenedChat();
+    if (!currentChat) {
+      console.error('No chat selected');
+      return;
+    }
+
+    if (this.hubConnection?.state !== HubConnectionState.Connected) {
+      console.error('SignalR not connected');
+      return;
+    }
+
+    // Optimistic UI update with UNIQUE ID
+    const tempMessage: Message = {
+      content: message,
+      senderId: this.authService.currentLoggedUser?.id?.toString() || null,
+      receiverId: currentChat.id?.toString() || null,
+      createdDate: new Date().toISOString(),
+      isRead: false,
+      id: Date.now() // ✅ FIX: unique temporary ID
+    };
+
+    this.chatMessages.update(messages => [...messages, tempMessage]);
+
+    this.hubConnection.invoke('SendMessage', {
+      receiverId: currentChat.id,
+      content: message
+    })
+      .then(() => console.log('Message sent successfully'))
+      .catch(err => console.error('Error sending message: ', err));
   }
-
-  if (this.hubConnection?.state !== HubConnectionState.Connected) {
-    console.error('SignalR not connected');
-    return;
-  }
-
-  // Optimistic UI update with UNIQUE ID
-  const tempMessage: Message = {
-    content: message,
-    senderId: this.authService.currentLoggedUser?.id?.toString() || null,
-    receiverId: currentChat.id?.toString() || null,
-    createdDate: new Date().toISOString(),
-    isRead: false,
-    id: Date.now() // ✅ FIX: unique temporary ID
-  };
-
-  this.chatMessages.update(messages => [...messages, tempMessage]);
-
-  this.hubConnection.invoke('SendMessage', {
-    receiverId: currentChat.id,
-    content: message
-  })
-  .then(() => console.log('Message sent successfully'))
-  .catch(err => console.error('Error sending message: ', err));
-}
 
   status(userName: string): string { //
     const currentChatUser = this.currentOpenedChat();
@@ -153,13 +167,26 @@ export class ChatService {
     return onlineUser ? onlineUser.isOnline : false;
   }
 
+
   loadMessages(pageNumber: number) {
-  this.hubConnection?.invoke(
-    'LoadMessages',
-    this.currentOpenedChat()?.id,
-    pageNumber
-  )
-  .catch(err => console.error(err))
-  .finally(() => this.isLoading.set(false));
-}
+    const chatUserId = this.currentOpenedChat()?.id;
+    if (!chatUserId) return;
+
+    this.isLoading.set(true);
+    this.isFirstLoad = pageNumber === 1; // ← tracks whether it's fresh load
+
+    this.hubConnection?.invoke('LoadMessages', chatUserId, pageNumber)
+      .catch(err => console.error('LoadMessages error:', err));
+    // Don't set isLoading false here — do it in ReceiveMessageList handler
+  }
+
+  //   loadMessages(pageNumber: number) {
+  //   this.hubConnection?.invoke(
+  //     'LoadMessages',
+  //     this.currentOpenedChat()?.id,
+  //     pageNumber
+  //   )
+  //   .catch(err => console.error(err))
+  //   .finally(() => this.isLoading.set(false));
+  // }
 }

@@ -86,7 +86,7 @@ export class ChatBox {
 
     setTimeout(() => {
       this.scrollToBottom();
-    }, 50);
+    }, 100);
   });
 
   scrollToBottom() {
