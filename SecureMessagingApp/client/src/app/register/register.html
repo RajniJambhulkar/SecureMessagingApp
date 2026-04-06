@@ -1,0 +1,126 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+
+  <div class="bg-white w-96 p-8 rounded-2xl shadow-2xl">
+
+    <form #registerForm="ngForm" (ngSubmit)="onRegister()" class="space-y-2">
+
+      <!-- Profile Upload (Form Field) -->
+      <div class="flex flex-col items-center">
+
+        <label
+          for="profileUpload"
+          class="group relative w-28 h-28 rounded-full border-2 border-dashed border-gray-300 cursor-pointer overflow-hidden">
+
+          <!-- Profile Image -->
+          <img
+            [src]="profilePicture|| '/avatar-icon.svg'"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-40">
+
+          <!-- Hover Overlay -->
+          <div
+            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+
+            <span class="text-white text-xl bg-black/40 rounded-full p-3">
+              <i class="fa-solid fa-camera"></i>
+            </span>
+
+          </div>
+
+        </label>
+
+        <input
+          id="profileUpload"
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onImageSelected($event)" />
+
+        <p class="text-sm text-gray-500 mt-2">
+          Upload profile photo
+        </p>
+
+      </div>
+
+      <!-- User Name -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>User Name</mat-label>
+        <input matInput name="userName" [(ngModel)]="userName" required #userNameRef="ngModel">
+        @if(userNameRef.invalid && userNameRef.touched){
+        <mat-error>
+          Username is required
+        </mat-error>
+      }
+      </mat-form-field>
+
+      <!-- Full Name -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Full Name</mat-label>
+        <input matInput name="fullName" [(ngModel)]="fullName" required #fullNameRef="ngModel">
+           @if(fullNameRef.invalid && fullNameRef.touched){
+        <mat-error>
+          Full name is required
+        </mat-error>
+      }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="email" required email #emailRef="ngModel">
+         @if(emailRef.invalid && emailRef.touched){
+        <mat-error>
+          Please enter a valid email
+        </mat-error>
+      }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          name="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          #passwordRef="ngModel">
+
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          {{ hidePassword ? '👁' : '🙈' }}
+        </button>
+
+        <mat-error *ngIf="passwordRef.invalid && passwordRef.touched">
+          Password must be at least 6 characters
+        </mat-error>
+
+      </mat-form-field>
+
+      <!-- Register Button -->
+      <button
+        type="submit"
+        [disabled]="loading || registerForm.invalid"
+        class="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-900 transition flex items-center justify-center disabled:opacity-30">
+
+        <span *ngIf="loading"
+          class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5 mr-2">
+        </span>
+
+        {{ loading ? 'Registering...' : 'Register' }}
+
+      </button>
+
+      <!-- Login -->
+      <p class="text-center text-sm text-gray-600">
+        Already have an account?
+        <a routerLink="/login" class="text-indigo-500 font-semibold hover:underline">
+          Login
+        </a>
+      </p>
+
+    </form>
+
+  </div>
+
+</div>

@@ -1,0 +1,73 @@
+
+@if(chatService.currentOpenedChat() == null) {
+  
+  <div class="w-full h-full">
+  <img
+    src="165626339.png"
+    alt="Chat Background"
+    class="w-full h-full object-cover"
+  />
+</div>
+
+} 
+@else 
+{
+<div class="flex flex-col h-full bg-gray-100">
+
+  <!-- Header -->
+  <div class="p-3 flex items-center justify-between bg-white shadow-sm shrink-0">
+    
+    <div class="flex items-center gap-3">
+      <img
+        [src]= chatService.currentOpenedChat()?.profileImage
+        class="w-10 h-10 rounded-full object-cover"
+      />
+
+      <div>
+        <h3 class="text-sm font-semibold text-gray-800">
+          {{ chatService.currentOpenedChat()?.fullName || 'Select a user' }}
+        </h3>
+        <p class="text-xs text-gray-500">
+          {{ chatService.currentOpenedChat()?.isOnline ? 'Online' : 'Offline' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-4 text-gray-500">
+      <mat-icon class="cursor-pointer hover:text-indigo-500">videocam</mat-icon>
+      <mat-icon class="cursor-pointer hover:text-indigo-500">call</mat-icon>
+    </div>
+
+  </div>
+
+
+
+ <!-- Messages -->
+<div class="flex-1 overflow-hidden">
+  <app-chat-box class="flex flex-col h-full"></app-chat-box>  <!-- add this -->
+</div>
+  
+   
+
+  <!-- Input -->
+  <div class="bg-white shadow-sm px-4 py-3 flex items-center gap-3 shrink-0">
+
+    <input
+      type="text"
+      (keyup.enter)="sendMessage()"
+       [(ngModel)]="message"
+      placeholder="Type a message..."
+      class="flex-1 px-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm"
+    />
+
+    <button
+      (click)="sendMessage()"
+      class="bg-indigo-500 text-white p-2 rounded-full hover:bg-indigo-600 transition flex items-center justify-center">
+      <mat-icon>send</mat-icon>
+    </button>
+
+  </div>
+
+</div>
+}

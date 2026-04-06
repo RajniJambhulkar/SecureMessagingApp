@@ -1,0 +1,20 @@
+<div class="h-full w-full p-4 flex flex-col items-center text-center">
+
+  <!-- Profile Image -->
+  <img
+  class="rounded-full mt-6 mb-4 w-32 h-32 object-cover"
+  [src]="chatService.currentOpenedChat()?.profileImage"
+  alt="profile picture"
+/>
+
+  <!-- Name -->
+  <p class="text-lg font-semibold">
+    {{ chatService.currentOpenedChat()?.fullName | titlecase }}
+  </p>
+
+  <!-- Username -->
+  <p class="text-sm text-gray-500">
+    {{ chatService.currentOpenedChat()?.userName }}
+  </p>
+
+</div>

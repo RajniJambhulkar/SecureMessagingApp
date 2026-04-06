@@ -1,0 +1,71 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+
+  <div class="bg-white w-96 p-8 rounded-2xl shadow-2xl">
+
+    <form #loginform="ngForm" (ngSubmit)="onLogin()" class="space-y-2">
+
+      <!-- Profile Upload (Form Field) -->
+      <div class="flex flex-col items-center text-2xl my-2 mb-5 font-medium">Login
+      </div>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="email" required email #emailRef="ngModel">
+         @if(emailRef.invalid && emailRef.touched){
+        <mat-error>
+          Please enter a valid email
+        </mat-error>
+      }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          name="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          #passwordRef="ngModel">
+
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          {{ hidePassword ? '👁' : '🙈' }}
+        </button>
+
+        <mat-error *ngIf="passwordRef.invalid && passwordRef.touched">
+          Password must be at least 6 characters
+        </mat-error>
+
+      </mat-form-field>
+
+      
+      <button
+  type="submit"
+  [disabled]="loading || loginform.invalid"
+  class="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-900 transition flex items-center justify-center disabled:opacity-30">
+
+  <span *ngIf="loading"
+    class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5 mr-2">
+  </span>
+
+  {{ loading ? 'Logging in...' : 'Login' }}
+
+</button>
+
+     
+      <p class="text-center text-sm text-gray-600">
+        Already have an account?
+        <a routerLink="/register" class="text-indigo-500 font-semibold hover:underline">
+          Register
+        </a>
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
