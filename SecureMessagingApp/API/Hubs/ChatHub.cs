@@ -23,6 +23,7 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
     //OnConnectedAsync() : This method runs automatically when a user connects to the hub.
     public override async Task OnConnectedAsync()
     {
+        Console.WriteLine("===== OnConnectedAsync Fired =====");
         
         var httpContext = Context.GetHttpContext();
         var receiverId = httpContext?.Request.Query["senderId"].ToString();  //Gets query parameters from the connection URL.

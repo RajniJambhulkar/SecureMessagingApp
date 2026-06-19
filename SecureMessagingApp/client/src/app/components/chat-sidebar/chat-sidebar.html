@@ -84,11 +84,17 @@
                 </h3>
                 
             </div>
-
+            <!-- typing indicator -->
+            @if(user!.isTyping){
+              <app-typing-indicator/>
+             }
             <!-- Unread Count -->
             <div class="bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
-                {{ user.unreadCount? user.unreadCount + 'new messages' : '' }}
-            </div>
+                {{ user.unreadCount? user.unreadCount + 'new messages' : '' }} 
+             </div>
+
+             
+           
 
         </div>
         

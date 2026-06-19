@@ -19,6 +19,7 @@ public static class AccountEndpoint{
                     [FromForm] string? fullName, [FromForm] string? email, [FromForm] string? password, 
                     [FromForm] string username, [FromForm] IFormFile? profileImage) =>
         {
+            //validate the email
             var userFromDb = await userManager.FindByEmailAsync(email!);
             if(userFromDb != null)
             {

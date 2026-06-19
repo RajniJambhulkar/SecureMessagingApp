@@ -40,9 +40,25 @@ private normalizeMessages(messages: Message[]): Message[] {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start()
+    this.hubConnection.on('Notify', (user:User)=>{    //is Active Notification
+      Notification.requestPermission().then((result)=>{
+        console.log('Permission:', result);
+        if(result == "granted"){
+        new Notification('Active now', {
+          body: user.fullName + 'is Online now',
+          icon: user.profileImage,
+        })}
+      });
+    });
+
+    this.hubConnection
+      .start()
       .then(() => console.log('SignalR Connected'))
-      .catch(err => console.error('SignalR Connection Error: ', err));
+      .catch(err => {
+        console.error('SignalR Connection Error: ', err)
+      });
+
+    
 
     this.hubConnection.on('OnlineUsers', (user: User[]) => {
       console.log(user);
@@ -50,6 +66,29 @@ private normalizeMessages(messages: Message[]): Message[] {
         return user.filter(user => user.userName !== this.authService.currentLoggedUser()?.userName)
       });
     });
+
+    this.hubConnection!.on('NotifyTypingToUser', (senderUsername) =>{ 
+      this.onlineUsers.update(users => 
+        users.map((user) =>{
+          if(user.userName === senderUsername){
+            user.isTyping = true;
+          }
+          return user;
+
+    })
+    );
+    setTimeout(()=>{
+      this.onlineUsers.update((users)=>
+        users.map((user)=>{
+          if(user.userName === senderUsername){
+            user.isTyping = false;
+          }
+          return user;
+        })
+      )
+    }, 2000);
+  });
+    
 
     // this.hubConnection.on('ReceiveMessageList', (message) => {
     //   // this.chatMessages.update(messages => [...message, ...messages]);
@@ -215,4 +254,15 @@ loadMessages(pageNumber: number) {
 //   .catch(err => console.error(err))
 //   .finally(() => this.isLoading.set(false));
 // }
+
+notifyTyping(){
+  this.hubConnection!.invoke('NotifyTyping', 
+  this.currentOpenedChat()?.userName)
+  .then((x) => {
+    console.log('notify for', x);
+  })
+  .catch((error) =>{
+    console.log(error);
+  })
+}
 }
