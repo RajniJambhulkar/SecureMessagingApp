@@ -17,6 +17,7 @@ export class ChatService {
 
   isFirstLoad = true;
 
+  autoscrollEnabled = signal<boolean>(true);
   private hubConnection?: HubConnection;
 
   private normalizeDate(dateStr: string): string {
@@ -97,6 +98,7 @@ private normalizeMessages(messages: Message[]): Message[] {
     // });
 
     this.hubConnection.on('ReceiveMessageList', (messages: Message[]) => {
+      this.isLoading.update(()=> true)
       const normalized = this.normalizeMessages(messages); 
       const sorted = [...normalized].sort(
     (a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
@@ -178,37 +180,40 @@ private normalizeMessages(messages: Message[]): Message[] {
 
 
   sendMessage(message: string) {
-  if (!message) return;
+    if (!message) return;
 
-  const currentChat = this.currentOpenedChat();
-  if (!currentChat) {
-    console.error('No chat selected');
-    return;
-  }
+    // Re-enable auto scroll when user sends a message
+    this.autoscrollEnabled.set(true);
 
-  if (this.hubConnection?.state !== HubConnectionState.Connected) {
-    console.error('SignalR not connected');
-    return;
-  }
+    const currentChat = this.currentOpenedChat();
+    if (!currentChat) {
+      console.error('No chat selected');
+      return;
+    }
 
-  // Optimistic UI update with UNIQUE ID
-  const tempMessage: Message = {
-    content: message,
-    senderId: this.authService.currentLoggedUser()?.id?.toString() || null,
-    receiverId: currentChat.id?.toString() || null,
-    createdDate: new Date().toISOString(),
-    isRead: false,
-    id: Date.now() // ✅ FIX: unique temporary ID
-  };
+    if (this.hubConnection?.state !== HubConnectionState.Connected) {
+      console.error('SignalR not connected');
+      return;
+    }
 
-  this.chatMessages.update(messages => [...messages, tempMessage]);
+    // Optimistic UI update with UNIQUE ID
+    const tempMessage: Message = {
+      content: message,
+      senderId: this.authService.currentLoggedUser()?.id?.toString() || null,
+      receiverId: currentChat.id?.toString() || null,
+      createdDate: new Date().toISOString(),
+      isRead: false,
+      id: Date.now() // ✅ FIX: unique temporary ID
+    };
 
-  this.hubConnection.invoke('SendMessage', {
-    receiverId: currentChat.id,
-    content: message
-  })
-  .then(() => console.log('Message sent successfully'))
-  .catch(err => console.error('Error sending message: ', err));
+    this.chatMessages.update(messages => [...messages, tempMessage]);
+
+    this.hubConnection.invoke('SendMessage', {
+      receiverId: currentChat.id,
+      content: message
+    })
+    .then(() => console.log('Message sent successfully'))
+    .catch(err => console.error('Error sending message: ', err));
 }
 
   status(userName: string): string { //
@@ -234,10 +239,10 @@ private normalizeMessages(messages: Message[]): Message[] {
 
 
 loadMessages(pageNumber: number) {
+  this.isLoading.update(() => true);
   const chatUserId = this.currentOpenedChat()?.id;
   if (!chatUserId) return;
 
-  this.isLoading.set(true);
   this.isFirstLoad = pageNumber === 1; // ← tracks whether it's fresh load
 
   this.hubConnection?.invoke('LoadMessages', chatUserId, pageNumber)

@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, inject, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, effect, ElementRef, inject, ViewChild } from '@angular/core';
 import { ChatService } from '../../service/chat-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AuthService } from '../../service/auth-service';
@@ -49,55 +49,56 @@ import { DatePipe } from '@angular/common';
     
     `],
 })
-export class ChatBox {
+export class ChatBox implements AfterViewChecked{
   
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
+
   chatService = inject(ChatService);
   authService = inject(AuthService);
 
-  private currentPage = 1;
-
-  // chat-box.component.ts
-// @ViewChild('chatContainer') chatContainer!: ElementRef;
-
-// ngOnInit() {
-//   effect(() => {
-//     this.chatService.chatMessages(); // track signal
-
-//     setTimeout(() => {
-//       this.scrollToBottom();
-//     }, 50); // small delay ensures DOM is painted
-//   });
-// }
-
-// scrollToBottom() {
-//   try {
-//     this.chatContainer.nativeElement.scrollTop =
-//       this.chatContainer.nativeElement.scrollHeight;
-//   } catch (e) {}
-// }
-// }
+  private pageNumber = 2;
   
-
-  @ViewChild('chatContainer') chatContainer!: ElementRef;
-
   // ✅ FIX: effect in field (valid injection context)
   scrollEffect = effect(() => {
     this.chatService.chatMessages(); // track signal
 
-    setTimeout(() => {
+     if (this.chatService.autoscrollEnabled()) {
+      setTimeout(() => {
       this.scrollToBottom();
     }, 100);
+  }
   });
 
-  scrollToBottom() {
-    try {
-      this.chatContainer.nativeElement.scrollTop =
-        this.chatContainer.nativeElement.scrollHeight;
-    } catch (e) {}
+  // loadMoreMessages() {
+  //   this.pageNumber++;
+  //   this.chatService.loadMessages(this.pageNumber);
+  //   this.scrollTop();
+  // }
+  loadMoreMessages() {
+  this.chatService.autoscrollEnabled.set(false);
+
+  this.pageNumber++;
+
+  this.chatService.loadMessages(this.pageNumber);
+}
+
+  ngAfterViewChecked(): void {
+    if(this.chatService.autoscrollEnabled()){
+      this.scrollToBottom();
+    }
   }
 
-  loadMore() {
-    this.currentPage++;
-    this.chatService.loadMessages(this.currentPage);
+   scrollToBottom() {
+      this.chatService.autoscrollEnabled.set(true);
+      this.chatContainer.nativeElement.scrollTop =
+      this.chatContainer.nativeElement.scrollHeight;
+      behavior:'smooth'
+
+    
+  }
+  scrollTop(){
+      this.chatService.autoscrollEnabled.set(false);
+      this.chatContainer.nativeElement.scrollTop = 0;
+      behavior:'smooth'
   }
 }

@@ -2640,11 +2640,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Aspnetcodes\\SecureMessaging\\SecureMessagingApp\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\rajni\\OneDrive\\Desktop\\Chat project\\SecureMessagingApp\\SecureMessagingApp\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Aspnetcodes\\SecureMessaging\\SecureMessagingApp\\API\\API.csproj",
+      "projectPath": "C:\\Users\\rajni\\OneDrive\\Desktop\\Chat project\\SecureMessagingApp\\SecureMessagingApp\\API\\API.csproj",
       "packagesPath": "C:\\Users\\rajni\\.nuget\\packages\\",
-      "outputPath": "C:\\Aspnetcodes\\SecureMessaging\\SecureMessagingApp\\API\\obj\\",
+      "outputPath": "C:\\Users\\rajni\\OneDrive\\Desktop\\Chat project\\SecureMessagingApp\\SecureMessagingApp\\API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
