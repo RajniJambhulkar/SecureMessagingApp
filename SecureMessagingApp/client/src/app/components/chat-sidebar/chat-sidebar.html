@@ -1,9 +1,9 @@
-<div class="w-80 h-screen bg-white shadow-lg flex flex-col">
+<div class="w-full sm:w-80 h-screen bg-white shadow-lg flex flex-col">
 
-<div class="flex items-center justify-between px-4 py-3 border-b bg-white">
+<div class="flex items-center justify-between px-4 py-3 border-b bg-white min-w-0">
 
   <!-- LEFT: User Info -->
-  <div class="flex items-center gap-3 min-w-0">
+  <div class="flex items-center gap-2 flex-shrink-0">
     
     <!-- Avatar -->
     <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
@@ -92,9 +92,6 @@
             <div class="bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
                 {{ user.unreadCount? user.unreadCount + 'new messages' : '' }} 
              </div>
-
-             
-           
 
         </div>
         

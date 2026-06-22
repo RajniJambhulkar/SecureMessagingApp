@@ -1,4 +1,4 @@
-<div class="h-screen flex items-center justify-center bg-gray-200">
+<!-- <div class="h-screen flex items-center justify-center bg-gray-200">
   <div class="flex w-[90%] h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden">
     
     <div class="w-1/4 border-r">
@@ -13,4 +13,21 @@
     </div>
 
   </div>
-</div>
+</div> -->
+<div class="h-screen flex items-center justify-center bg-gray-200">
+  <div class="flex w-[95%] h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden">
+
+    <div class="hidden md:block md:w-80 border-r flex-shrink-0">
+      <app-chat-sidebar></app-chat-sidebar>
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <app-chat-window></app-chat-window>
+    </div>
+
+    <div class="hidden lg:block lg:w-80 bg-gray-50 border-l flex-shrink-0">
+      <app-chat-right-sidebar></app-chat-right-sidebar>
+    </div>
+
+  </div>
+</div>  
