@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, effect, ElementRef, inject, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { ChatService } from '../../service/chat-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AuthService } from '../../service/auth-service';
@@ -101,4 +101,5 @@ export class ChatBox implements AfterViewChecked{
       this.chatContainer.nativeElement.scrollTop = 0;
       behavior:'smooth'
   }
+
 }

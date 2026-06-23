@@ -1,6 +1,8 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 px-4">
 
-  <div class="bg-white w-96 p-8 rounded-2xl shadow-2xl">
+  <!-- <div class="bg-white w-96 p-8 rounded-2xl shadow-2xl"> -->
+
+    <div class="bg-white w-full max-w-sm md:max-w-md p-6 md:p-8 rounded-2xl shadow-2xl">
 
     <form #loginform="ngForm" (ngSubmit)="onLogin()" class="space-y-2">
 
@@ -11,7 +13,14 @@
       <!-- Email -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Email Address</mat-label>
-        <input matInput type="email" name="email" [(ngModel)]="email" required email #emailRef="ngModel">
+        <input 
+        matInput 
+        type="email"
+         name="email" 
+         [(ngModel)]="email" 
+         required 
+         email 
+         #emailRef="ngModel">
          @if(emailRef.invalid && emailRef.touched){
         <mat-error>
           Please enter a valid email
@@ -32,9 +41,9 @@
           minlength="6"
           #passwordRef="ngModel">
 
-        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+        <!-- <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
           {{ hidePassword ? '👁' : '🙈' }}
-        </button>
+        </button> -->
 
         <mat-error *ngIf="passwordRef.invalid && passwordRef.touched">
           Password must be at least 6 characters
@@ -42,19 +51,9 @@
 
       </mat-form-field>
 
-      
-      <button
-  type="submit"
-  [disabled]="loading || loginform.invalid"
-  class="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-900 transition flex items-center justify-center disabled:opacity-30">
-
-  <span *ngIf="loading"
-    class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5 mr-2">
-  </span>
-
-  {{ loading ? 'Logging in...' : 'Login' }}
-
-</button>
+  <app-button 
+  [isDisabled]="!!loginform?.invalid"
+  [isLoading]="authService.isLoading()"/>
 
      
       <p class="text-center text-sm text-gray-600">

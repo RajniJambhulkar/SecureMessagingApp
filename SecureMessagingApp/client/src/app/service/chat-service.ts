@@ -34,6 +34,16 @@ private normalizeMessages(messages: Message[]): Message[] {
 }
 
   startConnection(token: string, senderId?: string) {
+
+    if(this.hubConnection?.state === HubConnectionState.Connected) return; //if signalR is already connected, don't create another connection
+
+    if(this.hubConnection){
+      this.hubConnection.off('ReceiveNewMessage');  //remove previously registered handlers
+      this.hubConnection.off('ReceiveMessageList');
+      this.hubConnection.off('OnlineUsers');
+      this.hubConnection.off('NotifyTypingToUser');
+      this.hubConnection.off('Notify');
+    }
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${this.hubUrl}?senderId=${senderId}`, {
         accessTokenFactory: () => token
@@ -120,7 +130,9 @@ private normalizeMessages(messages: Message[]): Message[] {
 });
 
    
-    this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
+  this.hubConnection.on('ReceiveNewMessage', (message: Message) => {
+    let audio = new Audio('assets/notification.mp3');
+    audio.play();
   const currentChat = this.currentOpenedChat();
 
   if (!currentChat) return;
@@ -141,8 +153,8 @@ private normalizeMessages(messages: Message[]): Message[] {
   document.title = '(1) New Message';
 });
 
-
   }
+
   disconnectConnection() {
     if (this.hubConnection?.state === HubConnectionState.Connected) {
       this.hubConnection.stop().catch(err => console.error('SignalR Disconnection Error: ', err));

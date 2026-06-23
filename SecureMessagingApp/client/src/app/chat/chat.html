@@ -14,7 +14,7 @@
 
   </div>
 </div> -->
-<div class="h-screen flex items-center justify-center bg-gray-200">
+<!-- <div class="h-screen flex items-center justify-center bg-gray-200">
   <div class="flex w-[95%] h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden">
 
     <div class="hidden md:block md:w-80 border-r flex-shrink-0">
@@ -30,4 +30,43 @@
     </div>
 
   </div>
-</div>  
+</div>   -->
+<div class="h-screen flex items-center justify-center bg-gray-200">
+  <div class="flex w-full md:w-[95%] h-screen md:h-[90vh] bg-white rounded-none md:rounded-3xl shadow-2xl overflow-hidden">
+
+    <!-- MOBILE: Show sidebar OR chat -->
+
+    <!-- Sidebar -->
+    <div
+      class="w-full md:w-80 border-r flex-shrink-0"
+      [class.hidden]="showChatWindow()"
+      [class.md:block]="true">
+
+      <app-chat-sidebar
+        (chatSelected)="openChat()">
+      </app-chat-sidebar>
+
+    </div>
+
+    <!-- Chat Window -->
+    <div
+      class="flex-1 min-w-0"
+      [class.hidden]="!showChatWindow()"
+      [class.md:block]="true">
+
+      <app-chat-window
+        (backClicked)="goBack()">
+      </app-chat-window>
+
+    </div>
+
+    <!-- Right Sidebar Desktop Only -->
+    <div
+      class="hidden lg:block lg:w-80 bg-gray-50 border-l flex-shrink-0">
+
+      <app-chat-right-sidebar></app-chat-right-sidebar>
+
+    </div>
+
+  </div>
+</div>

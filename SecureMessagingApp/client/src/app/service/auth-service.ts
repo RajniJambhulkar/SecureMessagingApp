@@ -11,6 +11,7 @@ export class AuthService {
   
   private baseUrl = 'http://localhost:5000/api/account';
   private token = "token";
+  isLoading = signal(false);
   private httpClient = inject(HttpClient);
 
 

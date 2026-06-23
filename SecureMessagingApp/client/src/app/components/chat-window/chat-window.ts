@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatService } from '../../service/chat-service';
 import { ChatBox } from "../chat-box/chat-box";
+import { Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-chat-window',
@@ -15,7 +16,7 @@ export class ChatWindow {
  @ViewChild('chatContainer') chatContainer?:ElementRef;
   chatService = inject(ChatService);
   message : string = '';
-
+  @Output() backClicked = new EventEmitter<void>();
 
 sendMessage() {
   if(!this.message) return;
@@ -30,4 +31,8 @@ private scrollToBottom(){
     this.chatContainer.nativeElement.scrollHeight;
   }
 }
+goBack() {
+  this.backClicked.emit();
+}
+
 }

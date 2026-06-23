@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ChatService } from '../../service/chat-service';
 import { User } from '../../models/user';
 import { TypingIndicator } from '../typing-indicator/typing-indicator';
+import { Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -20,6 +21,7 @@ export class ChatSidebar implements OnInit{
   authService = inject(AuthService);
   chatService = inject(ChatService);
   router = inject(Router);
+  @Output() chatSelected = new EventEmitter<void>();
 
 menu: any;
 
@@ -45,5 +47,6 @@ openChatWindow(user: User) {
   this.chatService.isLoading.set(true);
   this.chatService.isFirstLoad = true;
   this.chatService.loadMessages(1);
+  this.chatSelected.emit();
 }
 }

@@ -26,18 +26,18 @@
   <!-- RIGHT: Actions -->
   <div class="flex items-center gap-2 flex-shrink-0">
     
-    <button class="p-2 rounded-full hover:bg-gray-100">
+    <!-- <button class="p-2 rounded-full hover:bg-gray-100">
       <mat-icon class="text-gray-600 text-[20px]">search</mat-icon>
-    </button>
+    </button> -->
 
     <button class="mat-icon-button p-2 rounded-full hover:bg-gray-100" [matMenuTriggerFor]="menu">
       <mat-icon class="text-gray-600 text-[20px]">more_vert</mat-icon>     
     </button>
     <mat-menu #menu="matMenu">
-                <button class="flex items-center gap-2 p-2 text-indigo-500 hover:text-indigo-700">
+                <!-- <button class="flex items-center gap-2 p-2 text-indigo-500 hover:text-indigo-700">
                     <mat-icon>settings</mat-icon>
                     <span>Settings</span>
-                </button>
+                </button> -->
                 <button (click)="logout()"
                  class="flex items-center gap-2 p-2 text-indigo-500 hover:text-indigo-700">
                     <mat-icon>logout</mat-icon>
