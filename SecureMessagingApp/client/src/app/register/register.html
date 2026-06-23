@@ -68,12 +68,19 @@
       <!-- Email -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Email Address</mat-label>
-        <input matInput type="email" name="email" [(ngModel)]="email" required email #emailRef="ngModel">
-         @if(emailRef.invalid && emailRef.touched){
-        <mat-error>
-          Please enter a valid email
-        </mat-error>
-      }
+        <input 
+        matInput type="email" 
+        name="email" 
+        [(ngModel)]="email" 
+        required 
+        email 
+        #emailRef="ngModel">
+         @if(emailRef.invalid && emailRef.touched)
+         {
+            <mat-error>
+              Please enter a valid email
+            </mat-error>
+        }
       </mat-form-field>
 
       <!-- Password -->

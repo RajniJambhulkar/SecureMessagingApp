@@ -16,34 +16,43 @@ public static class AccountEndpoint{
         var group = app.MapGroup("/api/account").WithTags("account");
 
         group.MapPost("/register", async (HttpContext context, UserManager<AppUser> userManager, 
-                    [FromForm] string? fullName, [FromForm] string? email, [FromForm] string? password, 
-                    [FromForm] string username, [FromForm] IFormFile? profileImage) =>
+                    [FromForm] RegisterDTO registerDTO) =>
         {
             //validate the email
-            var userFromDb = await userManager.FindByEmailAsync(email!);
-            if(userFromDb != null)
+            var userFromDb = await userManager.FindByEmailAsync(registerDTO.Email);
+            if(userFromDb is not null)
             {
-                return Results.BadRequest(Response<string>
-                .Failure("User already exit."));
+                return Results.BadRequest(
+                Response<string>.Failure("User already exit."));
+            }
+            var existingUsername =
+            await userManager.FindByNameAsync(registerDTO.Username);
+
+            if(existingUsername is not null)
+            {
+                return Results.BadRequest(
+                Response<string>.Failure("Username already exists"));
             }
 
-            if(profileImage is null)
+            string picture;
+            if(registerDTO.ProfileImage is not null)
             {
-                return Results.BadRequest(Response<string>.Failure("Profile image is required."));
+                picture = await FileUpload.Upload(registerDTO.ProfileImage!);
+                picture = $"{context.Request.Scheme}://{context.Request.Host}/uploads/{picture}";
             }
-
-            var picture = await FileUpload.Upload(profileImage);
-            picture = $"{context.Request.Scheme}://{context.Request.Host}/uploads/{picture}";
-
+            else
+            {
+                picture = $"{context.Request.Scheme}://{context.Request.Host}/uploads/avatar-icon.svg";
+            }
             var user = new AppUser
             {
-                Email = email,
-                FullName = fullName,
-                UserName = username,
+                Email = registerDTO.Email,
+                FullName = registerDTO.FullName,
+                UserName = registerDTO.Username,
                 ProfileImage = picture
             };
 
-            var result = await userManager.CreateAsync(user, password!);
+            var result = await userManager.CreateAsync(user, registerDTO.Password!);
 
             if (!result.Succeeded)
             {

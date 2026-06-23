@@ -62,7 +62,7 @@ export class Register {
 
     this.authService.register(formData).subscribe({
       next: () => {
-        this.snackbar.open('Registration successful!', 'Close', { duration: 1000 });
+        this.snackbar.open('Registration successful!', 'Close', { duration: 2000 });
       },
       error: (error: HttpErrorResponse) => {
         let err = error.error as ApiResponse<string>;
