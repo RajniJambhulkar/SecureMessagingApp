@@ -1,0 +1,36 @@
+Secure Chat (PWA-enabled Real-Time Messaging Application)
+
+Built with ASP.NET Core, Angular, SignalR, and JWT Authentication.
+Real-time one-to-one messaging using SignalR.
+Typing indicators and online/offline presence tracking.
+Message history with pagination.
+Responsive design for desktop and mobile devices.
+Progressive Web App (PWA) support with installable experience and offline asset caching.
+Profile image upload and secure authentication.
+
+What is a PWA?
+
+PWA (Progressive Web App) is a web application that behaves like a native mobile or desktop app while still being built with web technologies such as Angular, React, HTML, CSS, and JavaScript.
+
+Think of it as:
+
+Website + App-like Experience = PWA
+
+install pwa package
+ng add @angular/pwa@
+npm view @angular/pwa
+- showing errors due to version mismatch
+
+ng version
+Angular CLI       : 21.2.0
+Angular           : 21.2.0
+npm view @angular/pwa 
+version22.0.3
+
+ng add @angular/pwa@21.2
+finally installed successfully
+package --> @angular/service-worker@21.2.0
+installed correctly.
+
+ng build
+check app.config.ts (it should be modified)

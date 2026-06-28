@@ -24,9 +24,13 @@ var JwtSetting = builder.Configuration.GetSection("JwtSetting");
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlite("Data Source=chat.db"));
+// builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlite("Data Source=chat.db"));
 //This registers AppDbContext (your Entity Framework database context) as a service. The lambda configures it to use SQLite as the database provider, with a local file called chat.db as the data source. 
 //Anywhere in your app that needs database access can now inject AppDbContext.
+
+builder.Services.AddDbContext<AppDbContext>(options=>options
+.UseSqlServer(builder.Configuration
+.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentityCore<AppUser>() //This sets up ASP.NET Core Identity — the built-in authentication/user management system — for a AppUser type
 .AddEntityFrameworkStores<AppDbContext>()  //tells Identity to store user data (accounts, roles, claims, etc.) in your AppDbContext / SQLite database
@@ -91,6 +95,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200", "https://localhost:4200"));
+
+//migrate pending migrations
+using(var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 // app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
