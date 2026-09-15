@@ -106,7 +106,8 @@ using(var scope = app.Services.CreateScope())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.MapAccountEndpoint();
+// app.MapAccountEndpoint();
+app.MapControllers();
 
 app.MapHub<ChatHub>("/hubs/chat");
 
