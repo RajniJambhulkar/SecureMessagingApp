@@ -59,7 +59,7 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
     }
     public async Task LoadMessages(string recipientId, int pageNumber = 1)
     {
-         int pageSize = 10;
+         int pageSize = 20;
          var username = Context.User!.Identity!.Name;
          var currentUser = await userManager.FindByNameAsync(username!);
         
@@ -73,6 +73,8 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
         x.SenderId == recipientId || x.SenderId == currentUser!.Id 
         && x.ReceiverId == recipientId)
         .OrderByDescending(x => x.CreatedDate)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
         .Select(x => new MessageResponseDto
         {
             Id = x.Id,
@@ -82,8 +84,6 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
             SenderId = x.SenderId
         })
         .ToListAsync();
-
-        
 
         foreach(var message in messages)
         {

@@ -56,7 +56,6 @@ export class ChatBox implements AfterViewChecked{
   chatService = inject(ChatService);
   authService = inject(AuthService);
 
-  private pageNumber = 2;
   
   // ✅ FIX: effect in field (valid injection context)
   scrollEffect = effect(() => {
@@ -69,17 +68,31 @@ export class ChatBox implements AfterViewChecked{
   }
   });
 
-  // loadMoreMessages() {
-  //   this.pageNumber++;
-  //   this.chatService.loadMessages(this.pageNumber);
-  //   this.scrollTop();
-  // }
-  loadMoreMessages() {
+ 
+//   loadMoreMessages() {
+//   this.chatService.autoscrollEnabled.set(false);
+
+//   this.pageNumber++;
+
+//   this.chatService.loadMessages(this.pageNumber);
+// }
+
+loadMoreMessages() {
+
   this.chatService.autoscrollEnabled.set(false);
 
-  this.pageNumber++;
+  const currentUser =
+      this.chatService.currentOpenedChat();
 
-  this.chatService.loadMessages(this.pageNumber);
+  if(!currentUser) return;
+
+  const cache =
+      this.chatService.getCachedChat(currentUser.id!.toString());
+
+  const nextPage = (cache?.pageNumber ?? 1) + 1;
+
+  this.chatService.loadMessages(nextPage);
+
 }
 
   ngAfterViewChecked(): void {

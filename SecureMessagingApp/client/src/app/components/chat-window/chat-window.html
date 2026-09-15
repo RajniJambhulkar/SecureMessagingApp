@@ -20,22 +20,25 @@
     
      <!-- back button -->
     <!-- <div class="flex items-center p-3 border-b"> -->
-      <div class="flex items-center gap-3">
-
+    <!-- <div class="flex items-center gap-3">
     <button
       class="md:hidden flex-shrink-0"
       (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
     </button>
+  </div> -->
+  <button
+      class="md:hidden flex-shrink-0 mr-2 p-1 rounded-full hover:bg-gray-100"
+      (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-  </div>
-
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 min-w-0">
       <img
         [src]= chatService.currentOpenedChat()?.profileImage
         class="w-10 h-10 rounded-full object-cover"
       />
-      <div>
+      <div class="min-w-0">
         <h3 class="text-sm font-semibold text-gray-800">
           {{ chatService.currentOpenedChat()?.fullName || 'Select a user' }}
         </h3>
@@ -43,12 +46,6 @@
           {{ chatService.currentOpenedChat()?.isOnline ? 'Online' : 'Offline' }}
         </p>
       </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="flex items-center gap-4 text-gray-500">
-      <mat-icon class="cursor-pointer hover:text-indigo-500">videocam</mat-icon>
-      <mat-icon class="cursor-pointer hover:text-indigo-500">call</mat-icon>
     </div>
 
   </div>
@@ -61,7 +58,6 @@
 </div>
   
    
-
   <!-- Input -->
   <div class="bg-white shadow-sm px-4 py-3 flex items-center gap-3 shrink-0">
 

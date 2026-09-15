@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+LmpdK6WF0I=",
+  "dgSpecHash": "4h+ObwhSiNA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\rajni\\OneDrive\\Desktop\\Chat project\\SecureMessagingApp\\SecureMessagingApp\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\rajni\\OneDrive\\Desktop\\ChatProjectInMemoryCache\\SecureMessagingApp\\SecureMessagingApp\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rajni\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\rajni\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

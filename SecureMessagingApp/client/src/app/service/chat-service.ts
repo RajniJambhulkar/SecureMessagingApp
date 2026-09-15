@@ -4,9 +4,16 @@ import { User } from '../models/user';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { Message } from '../models/message';
 
+interface ChatCache{
+  messages: Message[],
+  pageNumber: number,
+  hasMoreMessages: boolean
+}
+
 @Injectable({
   providedIn: 'root',
 })
+
 export class ChatService {
   private authService = inject(AuthService);
   private hubUrl = 'http://localhost:5000/hubs/chat';
@@ -16,6 +23,9 @@ export class ChatService {
   isLoading = signal<boolean>(true);
 
   isFirstLoad = true;
+
+  //           Map<userId,ChatCache>
+  private chatCache = new Map<string, ChatCache>();
 
   autoscrollEnabled = signal<boolean>(true);
   private hubConnection?: HubConnection;
@@ -126,6 +136,20 @@ private normalizeMessages(messages: Message[]): Message[] {
     });
   }
 
+  this.saveCurrentChatToCache();
+
+  const cache = this.getCachedChat(
+      this.currentOpenedChat()!.id!.toString()
+  );
+
+  if(cache){
+
+      cache.pageNumber = this.isFirstLoad
+          ? 1 : cache.pageNumber + 1;
+
+      cache.hasMoreMessages = messages.length > 0;
+  }
+
   this.isLoading.set(false);
 });
 
@@ -148,6 +172,7 @@ private normalizeMessages(messages: Message[]): Message[] {
     normalized.receiverId === currentChat.id?.toString()
   ) {
     this.chatMessages.update(messages => [...messages, normalized]);
+    this.saveCurrentChatToCache();
   }
 
   document.title = '(1) New Message';
@@ -188,7 +213,6 @@ private normalizeMessages(messages: Message[]): Message[] {
 //   // Load fresh messages
 //   this.loadMessages(1);
 // }
-
 
 
   sendMessage(message: string) {
@@ -262,16 +286,6 @@ loadMessages(pageNumber: number) {
     // Don't set isLoading false here — do it in ReceiveMessageList handler
 }
 
-//   loadMessages(pageNumber: number) {
-//   this.hubConnection?.invoke(
-//     'LoadMessages',
-//     this.currentOpenedChat()?.id,
-//     pageNumber
-//   )
-//   .catch(err => console.error(err))
-//   .finally(() => this.isLoading.set(false));
-// }
-
 notifyTyping(){
   this.hubConnection!.invoke('NotifyTyping', 
   this.currentOpenedChat()?.userName)
@@ -282,4 +296,36 @@ notifyTyping(){
     console.log(error);
   })
 }
+
+getCachedChat(userId: string): ChatCache | undefined {
+  return this.chatCache.get(userId);
+}
+saveCurrentChatToCache(){
+  const chatUser = this.currentOpenedChat();
+  if (!chatUser) return;
+  const existing = this.chatCache.get(chatUser.id!.toString());
+  this.chatCache.set(chatUser.id!.toString(), {
+    messages: [...this.chatMessages()],
+    pageNumber: existing?.pageNumber ?? 1,
+    hasMoreMessages: existing?.hasMoreMessages ?? true
+  });
+
+}
+updateCurrentPage(page:number){
+  const chatUser = this.currentOpenedChat();
+  if(!chatUser) return;
+  const cache = this.chatCache.get(chatUser.id!.toString());
+  if(!cache) return;
+  cache.pageNumber = page;
+}
+
+setHasMoreMessages(value: boolean){
+  const chatUser = this.currentOpenedChat();
+  if(!chatUser) return;
+  const cache = this.chatCache.get(chatUser.id.toString());
+  if(cache){
+     cache.hasMoreMessages = value;
+}
+}
+
 }

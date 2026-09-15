@@ -39,13 +39,44 @@ logout() {
 
 }
 
+// openChatWindow(user: User) {
+//   this.chatService.currentOpenedChat.set(user);
+//   this.chatService.chatMessages.set([]);
+//   this.chatService.isLoading.set(true);
+//   this.chatService.isFirstLoad = true;
+//   this.chatService.loadMessages(1);
+//   this.chatSelected.emit();
+// }
+
 openChatWindow(user: User) {
+
   this.chatService.currentOpenedChat.set(user);
+
+  const cache = this.chatService.getCachedChat(user.id!.toString());
+
+  if(cache){
+
+      this.chatService.chatMessages.set(cache.messages);
+
+      this.chatService.isLoading.set(false);
+
+      this.chatService.autoscrollEnabled.set(true);
+      this.chatSelected.emit(); // ADD THIS
+
+      return;
+
+  }
+
   this.chatService.chatMessages.set([]);
+
   this.chatService.isLoading.set(true);
+
   this.chatService.isFirstLoad = true;
+
   this.chatService.loadMessages(1);
-  this.chatSelected.emit();
+
+  this.chatSelected.emit(); // ADD THIS
+
 }
 
 get filteredUsers(): User[] {
